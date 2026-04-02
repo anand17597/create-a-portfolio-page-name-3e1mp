@@ -8,12 +8,18 @@ import Projects from '@/components/Projects';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import BackToTopButton from '@/components/BackToTopButton';
-import { useInView } from 'react-intersection-observer';
 import { cn } from '@/lib/utils'; // Assuming you have this utility
 
 const Index: React.FC = () => {
   const scrollTo = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById(id);
+    if (element) {
+      const navbarHeight = document.getElementById('navbar')?.offsetHeight || 0;
+      window.scrollTo({
+        top: element.offsetTop - navbarHeight,
+        behavior: 'smooth',
+      });
+    }
   }, []);
 
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -27,21 +33,21 @@ const Index: React.FC = () => {
     { label: "Contact", id: "contact" },
   ];
 
+  // Observer for active section highlighting
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      {
-        root: null,
-        rootMargin: '-30% 0px -70% 0px', // Adjust this to make sections active when they are more in the middle of the viewport
-        threshold: 0,
-      }
-    );
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -70% 0px', // Adjust these values to control when a section becomes active
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    }, observerOptions);
 
     Object.values(sectionRefs.current).forEach((ref) => {
       if (ref) {
@@ -58,42 +64,40 @@ const Index: React.FC = () => {
     };
   }, []);
 
-  const addSectionRef = useCallback((node: HTMLElement | null) => {
-    if (node) {
-      sectionRefs.current[node.id] = node;
-    }
+  const setSectionRef = useCallback((id: string) => (node: HTMLElement | null) => {
+    sectionRefs.current[id] = node;
   }, []);
 
+  const scrollToContact = useCallback(() => scrollTo('contact'), [scrollTo]);
+  const scrollToProjects = useCallback(() => scrollTo('projects'), [scrollTo]);
+
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-indigo-50 text-slate-700">
+    <div className="bg-gradient-to-br from-slate-50 to-indigo-50 text-slate-700 min-h-screen">
       <Navbar navLinks={navLinks} scrollTo={scrollTo} activeSection={activeSection} />
 
-      <section id="hero" ref={addSectionRef}>
-        <Hero scrollToContact={() => scrollTo('contact')} scrollToProjects={() => scrollTo('projects')} />
-      </section>
+      <main>
+        <div ref={setSectionRef('hero')}>
+          <Hero scrollToContact={scrollToContact} scrollToProjects={scrollToProjects} />
+        </div>
+        <div ref={setSectionRef('about')} className="section-padding">
+          <About />
+        </div>
+        <div ref={setSectionRef('skills')} className="section-padding bg-slate-100">
+          <Skills />
+        </div>
+        <div ref={setSectionRef('experience')} className="section-padding">
+          <Experience />
+        </div>
+        <div ref={setSectionRef('projects')} className="section-padding bg-slate-100">
+          <Projects />
+        </div>
+        <div ref={setSectionRef('contact')} className="section-padding">
+          <Contact />
+        </div>
+      </main>
 
-      <section id="about" ref={addSectionRef} className="section-padding bg-white">
-        <About />
-      </section>
-
-      <section id="skills" ref={addSectionRef} className="section-padding bg-indigo-50">
-        <Skills />
-      </section>
-
-      <section id="experience" ref={addSectionRef} className="section-padding bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
-        <Experience />
-      </section>
-
-      <section id="projects" ref={addSectionRef} className="section-padding bg-white">
-        <Projects />
-      </section>
-
-      <section id="contact" ref={addSectionRef} className="section-padding bg-indigo-50">
-        <Contact />
-      </section>
-
-      <Footer scrollTo={scrollTo} />
-      <BackToTopButton scrollTo={() => scrollTo('hero')} />
+      <Footer />
+      <BackToTopButton />
     </div>
   );
 };
