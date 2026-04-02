@@ -35,57 +35,64 @@ const Navbar: React.FC<NavbarProps> = ({ navLinks, scrollTo, activeSection }) =>
   return (
     <nav
       ref={navRef}
+      id="navbar"
       className={cn(
-        "fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md transition-all duration-300",
-        isScrolled ? "shadow-lg" : "shadow-sm"
+        "fixed top-0 left-0 w-full z-50 transition-all duration-300",
+        isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-transparent",
+        isMenuOpen ? "bg-white shadow-lg" : "" // Ensure menu is visible when open on mobile
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#hero" onClick={(e) => { e.preventDefault(); handleNavLinkClick('hero'); }} className="text-2xl font-bold text-indigo-600">
           Anandhan V
         </a>
+
+        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
             <button
               key={link.id}
               onClick={() => handleNavLinkClick(link.id)}
               className={cn(
-                "text-sm font-medium transition-colors",
-                activeSection === link.id
-                  ? "text-indigo-600 font-semibold"
-                  : "text-slate-600 hover:text-indigo-600"
+                "text-sm font-medium transition-colors relative group",
+                activeSection === link.id ? "text-indigo-600 font-semibold" : "text-slate-600 hover:text-indigo-600"
               )}
             >
               {link.label}
+              {activeSection === link.id && (
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-600 rounded-full transition-all duration-300"></span>
+              )}
             </button>
           ))}
         </div>
-        <button
-          className="md:hidden p-2 rounded-md text-slate-600 hover:bg-slate-100 transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label="Toggle navigation menu"
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+
+        {/* Mobile Menu Button */}
+        <div className="md:hidden flex items-center">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="text-slate-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2"
+            aria-label="Toggle navigation menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Panel */}
       <div
         className={cn(
-          "md:hidden bg-white/95 backdrop-blur-md py-4 shadow-lg border-t border-slate-100",
-          isMenuOpen ? "block" : "hidden"
+          "md:hidden absolute w-full bg-white shadow-lg transition-all duration-300 ease-in-out overflow-hidden",
+          isMenuOpen ? "max-h-screen opacity-100 py-4" : "max-h-0 opacity-0 py-0"
         )}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col space-y-3">
+        <div className="px-4 pt-2 pb-3 space-y-2 sm:px-6">
           {navLinks.map((link) => (
             <button
               key={link.id}
               onClick={() => handleNavLinkClick(link.id)}
               className={cn(
-                "text-base font-medium transition-colors p-2 rounded-md",
-                activeSection === link.id
-                  ? "text-indigo-600 font-semibold bg-slate-50"
-                  : "text-slate-700 hover:text-indigo-600 hover:bg-slate-50"
+                "block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors",
+                activeSection === link.id ? "bg-indigo-50 text-indigo-700" : "text-slate-700 hover:bg-slate-50 hover:text-indigo-600"
               )}
             >
               {link.label}
