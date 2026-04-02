@@ -15,47 +15,50 @@ const About: React.FC = () => {
   };
 
   return (
-    <motion.div
+    <motion.section
+      id="about"
       ref={ref}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
       variants={{
         visible: { transition: { staggerChildren: 0.1 } },
       }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center"
+      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center py-12 md:py-20 lg:py-28"
     >
-      <motion.div variants={itemVariants}>
+      <motion.div variants={itemVariants} className="md:order-2">
         <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-6">About Me</h2>
         <motion.p variants={itemVariants} className="text-lg text-slate-600 mb-4 leading-relaxed">
-          With over 5 years of hands-on experience in fullstack development, I specialize in building robust and scalable web applications. My journey has equipped me with a deep understanding of both frontend and backend technologies, enabling me to deliver seamless digital experiences from conception to deployment.
+          Hello! I'm Anandhan V, a dedicated Fullstack Developer with <span className="font-semibold text-indigo-600">7 years of experience</span> in crafting robust and user-friendly web applications. My journey in development has allowed me to work across the entire stack, from designing intuitive user interfaces to building powerful backend systems and managing databases.
         </motion.p>
-        <motion.p variants={itemVariants} className="text-lg text-slate-600 leading-relaxed">
-          I am passionate about clean code, efficient solutions, and continuously learning new technologies to stay at the forefront of the industry. I thrive in dynamic environments where I can contribute to impactful projects and collaborate with talented teams.
+        <motion.p variants={itemVariants} className="text-lg text-slate-600 mb-4 leading-relaxed">
+          I thrive on solving complex problems and am passionate about creating clean, efficient, and scalable code. Whether it's developing interactive frontends with React/Next.js or setting up performant APIs with Node.js/PHP and MySQL, I enjoy bringing ideas to life and continuously learning new technologies.
         </motion.p>
-        <motion.div variants={itemVariants} className="mt-8">
-          <p className="text-md text-slate-600 flex items-center mb-2">
-            <Mail className="mr-3 text-indigo-500" size={20} />
-            <span className="font-medium">Email:</span> anandhan@pepul.com
-          </p>
-          <p className="text-md text-slate-600 flex items-center">
-            <Phone className="mr-3 text-indigo-500" size={20} />
-            <span className="font-medium">Phone:</span> +91 7010190110
-          </p>
+        <motion.p variants={itemVariants} className="text-lg text-slate-600 mb-6 leading-relaxed">
+          My goal is to deliver high-quality solutions that not only meet but exceed expectations, ensuring a seamless experience for both users and developers.
+        </motion.p>
+        <motion.div variants={itemVariants} className="flex items-center space-x-4 mb-3">
+          <Mail className="text-indigo-600" size={20} />
+          <a href="mailto:anandhan@pepul.com" className="text-slate-700 hover:text-indigo-600 transition-colors">anandhan@pepul.com</a>
+        </motion.div>
+        <motion.div variants={itemVariants} className="flex items-center space-x-4">
+          <Phone className="text-indigo-600" size={20} />
+          <a href="tel:+917010190110" className="text-slate-700 hover:text-indigo-600 transition-colors">+91 7010190110</a>
         </motion.div>
       </motion.div>
-      <motion.div variants={itemVariants} className="md:order-first">
+
+      <motion.div variants={itemVariants} className="md:order-1 flex justify-center">
         <img
-          src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=1600&q=90"
-          alt="Developer working on a laptop"
+          src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=600&h=600&q=80"
+          alt="Anandhan V - Profile Picture"
+          className="rounded-lg shadow-xl object-cover w-full max-w-sm md:max-w-md h-auto"
           loading="lazy"
           onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
             e.currentTarget.onerror = null;
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=90';
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=600&h=600&q=80';
           }}
-          className="rounded-lg shadow-xl w-full h-auto object-cover max-h-[500px]"
         />
       </motion.div>
-    </motion.div>
+    </motion.section>
   );
 };
 
