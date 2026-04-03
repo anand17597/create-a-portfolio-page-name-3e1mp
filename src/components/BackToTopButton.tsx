@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUp } from 'lucide-react';
+import {ArrowUp} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const BackToTopButton: React.FC = () => {
