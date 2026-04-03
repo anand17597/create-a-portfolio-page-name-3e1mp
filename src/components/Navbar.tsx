@@ -37,69 +37,61 @@ const Navbar: React.FC<NavbarProps> = ({ navLinks, scrollTo, activeSection }) =>
       ref={navRef}
       id="navbar"
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 py-4 md:py-6",
-        isScrolled ? "bg-slate-950 shadow-lg" : "bg-slate-900/80 backdrop-blur-sm"
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+        isScrolled ? "bg-white/90 shadow-lg backdrop-blur-sm h-14" : "bg-transparent h-16"
       )}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
         {/* Logo */}
-        <a href="#hero" onClick={(e) => handleNavLinkClick('hero')} className="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">
+        <a href="#hero" onClick={(e) => { e.preventDefault(); handleNavLinkClick('hero'); }} className="text-2xl font-extrabold text-blue-600 hover:text-blue-700 transition-colors">
           Anandhan V
         </a>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-8">
+        {/* Desktop Nav Links */}
+        <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.id}
-              href={`#${link.id}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavLinkClick(link.id);
-              }}
+              onClick={() => handleNavLinkClick(link.id)}
               className={cn(
-                "text-white hover:text-indigo-400 transition-colors font-medium",
-                activeSection === link.id && "text-indigo-400 border-b-2 border-indigo-400 pb-1"
+                "relative text-sm font-medium transition-colors after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-blue-600 after:transition-all after:duration-300 hover:after:w-full",
+                activeSection === link.id ? "text-blue-600 after:w-full" : "text-slate-700 hover:text-blue-600"
               )}
             >
               {link.label}
-            </a>
+            </button>
           ))}
         </div>
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-white focus:outline-none"
+          className="md:hidden p-2 text-slate-700 hover:text-blue-600 transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label="Toggle navigation menu"
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       <div
         className={cn(
-          "md:hidden absolute top-full left-0 w-full bg-slate-900 shadow-lg py-4 transition-all duration-300 ease-in-out",
-          isMenuOpen ? "translate-y-0 opacity-100 pointer-events-auto" : "-translate-y-full opacity-0 pointer-events-none"
+          "md:hidden bg-white/95 backdrop-blur-sm shadow-lg py-4 absolute top-full left-0 right-0 z-40 transition-all duration-300 ease-in-out",
+          isMenuOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible -translate-y-2"
         )}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center space-y-4">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.id}
-              href={`#${link.id}`}
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavLinkClick(link.id);
-              }}
+              onClick={() => handleNavLinkClick(link.id)}
               className={cn(
-                "text-white text-lg hover:text-indigo-400 transition-colors font-medium py-2",
-                activeSection === link.id && "text-indigo-400"
+                "text-base py-2 w-full text-center transition-colors",
+                activeSection === link.id ? "text-blue-600 font-bold" : "text-slate-700 hover:text-blue-600 font-medium"
               )}
             >
               {link.label}
-            </a>
+            </button>
           ))}
         </div>
       </div>
