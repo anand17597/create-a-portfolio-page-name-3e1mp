@@ -1,7 +1,8 @@
-import React, { forwardRef, useCallback, useState } from 'react';
-import {Mail,Phone,MapPin} from 'lucide-react';
+import { lazy } from "react";
+import React, { forwardRef, useCallback } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
+import {Mail,Phone} from 'lucide-react';
 
 const Contact = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) => {
   const { ref: inViewRef, inView } = useInView({
@@ -9,10 +10,8 @@ const Contact = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =>
     threshold: 0.1,
   });
 
-  // Merge the passed ref with the inViewRef
   const setRefs = useCallback(
-    (node: HTMLDivElement) => {
-      // Pass the node to the inViewRef
+    (node: HTMLDivElement | null) => {
       if (inViewRef) {
         if (typeof inViewRef === 'function') {
           inViewRef(node);
@@ -20,7 +19,6 @@ const Contact = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =>
           (inViewRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
       }
-      // Pass the node to the forwarded ref
       if (ref) {
         if (typeof ref === 'function') {
           ref(node);
@@ -32,107 +30,67 @@ const Contact = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =>
     [inViewRef, ref]
   );
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  const containerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: 'easeOut',
+        staggerChildren: 0.2,
+      },
+    },
   };
 
-  const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setFormStatus('submitting');
-    // Simulate API call
-    setTimeout(() => {
-      setFormStatus('success');
-      // In a real app, you'd send data to a backend here
-      // e.g., console.log('Form submitted:', new FormData(e.currentTarget));
-      e.currentTarget.reset(); // Clear form fields
-    }, 1500);
+  const itemVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
     <motion.section
       id="contact"
       ref={setRefs}
+      className="bg-white py-12 md:py-20 lg:py-28"
+      variants={containerVariants}
       initial="hidden"
-      animate={inView ? "visible" : "hidden"}
-      variants={{
-        visible: { transition: { staggerChildren: 0.1 } },
-      }}
-      className="section-padding bg-slate-800 text-white"
+      animate={inView ? 'visible' : 'hidden'}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        <motion.div variants={itemVariants}>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">Let's Connect</h2>
-          <p className="text-lg mb-8 text-slate-300">
-            I'm always open to new opportunities, collaborations, and interesting projects. Feel free to reach out!
-          </p>
-          <div className="space-y-6">
-            <div className="flex items-center">
-              <Mail className="mr-4 text-indigo-400" size={28} />
-              <a href="mailto:anandhan@pepul.com" className="text-xl text-white hover:text-indigo-400 transition-colors">anandhan@pepul.com</a>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6" variants={itemVariants}>
+          Get in Touch
+        </motion.h2>
+        <motion.p className="text-lg text-slate-600 mb-12 max-w-2xl mx-auto" variants={itemVariants}>
+          I'm always open to new opportunities, collaborations, and exciting projects. Feel free to reach out!
+        </motion.p>
+
+        <div className="flex flex-col md:flex-row items-center justify-center gap-8 lg:gap-16">
+          <motion.div className="flex flex-col items-center text-center p-6 bg-blue-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1" variants={itemVariants}>
+            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8" />
             </div>
-            <div className="flex items-center">
-              <Phone className="mr-4 text-indigo-400" size={28} />
-              <a href="tel:+917010190110" className="text-xl text-white hover:text-indigo-400 transition-colors">+91 7010190110</a>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Email Me</h3>
+            <a href="mailto:anandhan@pepul.com" className="text-blue-600 hover:text-blue-800 text-lg font-medium">anandhan@pepul.com</a>
+          </motion.div>
+
+          <motion.div className="flex flex-col items-center text-center p-6 bg-blue-50 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1" variants={itemVariants}>
+            <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center mb-4">
+              <Phone className="w-8 h-8" />
             </div>
-            <div className="flex items-center">
-              <MapPin className="mr-4 text-indigo-400" size={28} />
-              <span className="text-xl text-white">Chennai, India</span>
-            </div>
-          </div>
-        </motion.div>
-        <motion.div variants={itemVariants}>
-          <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-xl">
-            <h3 className="text-2xl font-bold text-slate-800 mb-6">Send Me a Message</h3>
-            <div className="mb-4">
-              <label htmlFor="name" className="block text-slate-700 text-sm font-medium mb-2">Name</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                className="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                placeholder="Your Name"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="email" className="block text-slate-700 text-sm font-medium mb-2">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                className="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                placeholder="your@email.com"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label htmlFor="message" className="block text-slate-700 text-sm font-medium mb-2">Message</label>
-              <textarea
-                id="message"
-                name="message"
-                rows={5}
-                className="w-full px-4 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-                placeholder="Your message..."
-                required
-              ></textarea>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white px-6 py-3 rounded-md text-lg font-semibold hover:bg-indigo-700 transition-transform transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={formStatus === 'submitting'}
-            >
-              {formStatus === 'submitting' ? 'Sending...' : formStatus === 'success' ? 'Sent Successfully!' : 'Send Message'}
-            </button>
-            {formStatus === 'success' && (
-              <p className="mt-4 text-center text-green-600">Your message has been sent!</p>
-            )}
-            {formStatus === 'error' && (
-              <p className="mt-4 text-center text-red-600">Failed to send message. Please try again.</p>
-            )}
-          </form>
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">Call Me</h3>
+            <a href="tel:+917010190110" className="text-blue-600 hover:text-blue-800 text-lg font-medium">+91 70101 90110</a>
+          </motion.div>
+        </div>
+
+        <motion.div className="mt-16" variants={itemVariants}>
+          <img
+            src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80"
+            alt="Contact illustration"
+            className="rounded-lg shadow-xl max-w-lg mx-auto h-auto transform hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=90'; }}
+          />
         </motion.div>
       </div>
     </motion.section>
