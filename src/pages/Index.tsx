@@ -10,35 +10,42 @@ import Footer from '@/components/Footer';
 import BackToTopButton from '@/components/BackToTopButton';
 import { cn } from '@/lib/utils'; // Assuming you have this utility
 
+interface NavLink {
+  label: string;
+  id: string;
+}
+
+const navLinks: NavLink[] = [
+  { label: 'Home', id: 'hero' },
+  { label: 'About', id: 'about' },
+  { label: 'Skills', id: 'skills' },
+  { label: 'Experience', id: 'experience' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Contact', id: 'contact' },
+];
+
 const Index: React.FC = () => {
   const scrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const navbarHeight = document.getElementById('navbar')?.offsetHeight || 0;
+      // Get navbar height dynamically
+      const navbar = document.getElementById('navbar');
+      const navbarHeight = navbar ? navbar.offsetHeight : 0;
       window.scrollTo({
-        top: element.offsetTop - navbarHeight,
+        top: element.offsetTop - navbarHeight + 1, // +1 to ensure it's slightly below navbar
         behavior: 'smooth',
       });
     }
   }, []);
 
   const [activeSection, setActiveSection] = useState<string>('hero');
-  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLDivElement | HTMLSectionElement | null>>({});
 
-  const navLinks = [
-    { label: "About", id: "about" },
-    { label: "Skills", id: "skills" },
-    { label: "Experience", id: "experience" },
-    { label: "Projects", id: "projects" },
-    { label: "Contact", id: "contact" },
-  ];
-
-  // Observer for active section highlighting
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '-30% 0px -70% 0px', // Adjust these values to control when a section becomes active
-      threshold: 0,
+      rootMargin: '0px 0px -50% 0px', // Adjust this margin if sections are too short or tall
+      threshold: 0.1,
     };
 
     const observer = new IntersectionObserver((entries) => {
@@ -49,53 +56,43 @@ const Index: React.FC = () => {
       });
     }, observerOptions);
 
-    Object.values(sectionRefs.current).forEach((ref) => {
+    // Observe all sections
+    navLinks.forEach((link) => {
+      const ref = sectionRefs.current[link.id];
       if (ref) {
         observer.observe(ref);
       }
     });
 
     return () => {
-      Object.values(sectionRefs.current).forEach((ref) => {
+      // Disconnect observer on component unmount
+      navLinks.forEach((link) => {
+        const ref = sectionRefs.current[link.id];
         if (ref) {
           observer.unobserve(ref);
         }
       });
     };
-  }, []);
-
-  const setSectionRef = useCallback((id: string) => (node: HTMLElement | null) => {
-    sectionRefs.current[id] = node;
-  }, []);
+  }, [navLinks]);
 
   const scrollToContact = useCallback(() => scrollTo('contact'), [scrollTo]);
   const scrollToProjects = useCallback(() => scrollTo('projects'), [scrollTo]);
 
   return (
-    <div className="bg-gradient-to-br from-slate-50 to-indigo-50 text-slate-700 min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Navbar navLinks={navLinks} scrollTo={scrollTo} activeSection={activeSection} />
-
-      <main>
-        <div ref={setSectionRef('hero')}>
-          <Hero scrollToContact={scrollToContact} scrollToProjects={scrollToProjects} />
-        </div>
-        <div ref={setSectionRef('about')} className="section-padding">
-          <About />
-        </div>
-        <div ref={setSectionRef('skills')} className="section-padding bg-slate-100">
-          <Skills />
-        </div>
-        <div ref={setSectionRef('experience')} className="section-padding">
-          <Experience />
-        </div>
-        <div ref={setSectionRef('projects')} className="section-padding bg-slate-100">
-          <Projects />
-        </div>
-        <div ref={setSectionRef('contact')} className="section-padding">
-          <Contact />
-        </div>
+      <main className="flex-grow">
+        <Hero
+          ref={(el) => (sectionRefs.current['hero'] = el)}
+          scrollToContact={scrollToContact}
+          scrollToProjects={scrollToProjects}
+        />
+        <About ref={(el) => (sectionRefs.current['about'] = el)} />
+        <Skills ref={(el) => (sectionRefs.current['skills'] = el)} />
+        <Experience ref={(el) => (sectionRefs.current['experience'] = el)} />
+        <Projects ref={(el) => (sectionRefs.current['projects'] = el)} />
+        <Contact ref={(el) => (sectionRefs.current['contact'] = el)} />
       </main>
-
       <Footer />
       <BackToTopButton />
     </div>
