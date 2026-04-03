@@ -1,5 +1,5 @@
 import React from 'react';
-import { Code2, FileCode, Database, Server, Atom, ArrowRightLeft, GitBranch, MessageSquare, LayoutDashboard, Cloud, Palette, ShieldCheck } from 'lucide-react';
+import {Code2,FileCode,Database,Server,Atom,ArrowRightLeft,GitBranch,MessageSquare,LayoutDashboard,Cloud,Palette,ShieldCheck} from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 
