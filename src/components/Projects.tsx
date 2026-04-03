@@ -1,3 +1,4 @@
+import { lazy } from "react";
 import React, { forwardRef, useCallback } from 'react';
 import {ArrowRight} from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
