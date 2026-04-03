@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback } from 'react';
-import {Code2,FileCode,Database,Server,Atom,ArrowRightLeft,GitBranch,MessageSquare,LayoutDashboard,Cloud,Palette,ShieldCheck} from 'lucide-react';
+import {Code2,FileCode,Database,Server,Atom,ArrowRightLeft,GitBranch,MessageSquare,LayoutDashboard,Cloud,Palette} from 'lucide-react'; // Removed ShieldCheck, added Cloud
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 
@@ -31,7 +31,7 @@ const Skills = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) => 
 
   // Merge the passed ref with the inViewRef
   const setRefs = useCallback(
-    (node: HTMLDivElement) => {
+    (node: HTMLDivElement | null) => {
       // Pass the node to the inViewRef
       if (inViewRef) {
         if (typeof inViewRef === 'function') {
@@ -53,42 +53,45 @@ const Skills = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) => 
   );
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
+      y: 0,
       transition: {
-        staggerChildren: 0.05, // Stagger children for a nice fade-in effect
+        duration: 0.8,
+        ease: 'easeOut',
+        staggerChildren: 0.05, // Stagger children for a nice reveal effect
       },
     },
   };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
     <motion.section
       id="skills"
       ref={setRefs}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      className="bg-slate-50 py-12 md:py-20 lg:py-28"
       variants={containerVariants}
-      className="section-padding bg-slate-50"
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12" variants={itemVariants}>
           My Skills
         </motion.h2>
-        <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+        <motion.div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
           {skills.map((skill, index) => (
             <motion.div
               key={skill.name}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex flex-col items-center justify-center text-center"
               variants={itemVariants}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center justify-center"
             >
-              <skill.icon className="text-indigo-500 mb-4" size={48} />
-              <h3 className="text-xl font-semibold text-slate-700">{skill.name}</h3>
+              <skill.icon className="w-10 h-10 text-blue-600 mb-3" />
+              <h3 className="text-lg font-semibold text-slate-800">{skill.name}</h3>
             </motion.div>
           ))}
         </motion.div>
