@@ -37,66 +37,69 @@ const Navbar: React.FC<NavbarProps> = ({ navLinks, scrollTo, activeSection }) =>
       ref={navRef}
       id="navbar"
       className={cn(
-        "fixed top-0 left-0 w-full z-50 transition-all duration-300",
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-lg" : "bg-transparent",
-        isMenuOpen ? "bg-white shadow-lg" : "" // Ensure menu is visible when open on mobile
+        "fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 py-4 md:py-6",
+        isScrolled ? "bg-slate-950 shadow-lg" : "bg-slate-900/80 backdrop-blur-sm"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        <a href="#hero" onClick={(e) => { e.preventDefault(); handleNavLinkClick('hero'); }} className="text-2xl font-bold text-indigo-600">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+        {/* Logo */}
+        <a href="#hero" onClick={(e) => handleNavLinkClick('hero')} className="text-2xl font-bold text-white hover:text-indigo-400 transition-colors">
           Anandhan V
         </a>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           {navLinks.map((link) => (
-            <button
+            <a
               key={link.id}
-              onClick={() => handleNavLinkClick(link.id)}
+              href={`#${link.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavLinkClick(link.id);
+              }}
               className={cn(
-                "text-sm font-medium transition-colors relative group",
-                activeSection === link.id ? "text-indigo-600 font-semibold" : "text-slate-600 hover:text-indigo-600"
+                "text-white hover:text-indigo-400 transition-colors font-medium",
+                activeSection === link.id && "text-indigo-400 border-b-2 border-indigo-400 pb-1"
               )}
             >
               {link.label}
-              {activeSection === link.id && (
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-600 rounded-full transition-all duration-300"></span>
-              )}
-            </button>
+            </a>
           ))}
         </div>
 
         {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center">
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="text-slate-600 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-md p-2"
-            aria-label="Toggle navigation menu"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
+        <button
+          className="md:hidden text-white focus:outline-none"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle navigation menu"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
 
-      {/* Mobile Menu Panel */}
+      {/* Mobile Menu Overlay */}
       <div
         className={cn(
-          "md:hidden absolute w-full bg-white shadow-lg transition-all duration-300 ease-in-out overflow-hidden",
-          isMenuOpen ? "max-h-screen opacity-100 py-4" : "max-h-0 opacity-0 py-0"
+          "md:hidden absolute top-full left-0 w-full bg-slate-900 shadow-lg py-4 transition-all duration-300 ease-in-out",
+          isMenuOpen ? "translate-y-0 opacity-100 pointer-events-auto" : "-translate-y-full opacity-0 pointer-events-none"
         )}
       >
-        <div className="px-4 pt-2 pb-3 space-y-2 sm:px-6">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center space-y-4">
           {navLinks.map((link) => (
-            <button
+            <a
               key={link.id}
-              onClick={() => handleNavLinkClick(link.id)}
+              href={`#${link.id}`}
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavLinkClick(link.id);
+              }}
               className={cn(
-                "block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-colors",
-                activeSection === link.id ? "bg-indigo-50 text-indigo-700" : "text-slate-700 hover:bg-slate-50 hover:text-indigo-600"
+                "text-white text-lg hover:text-indigo-400 transition-colors font-medium py-2",
+                activeSection === link.id && "text-indigo-400"
               )}
             >
               {link.label}
-            </button>
+            </a>
           ))}
         </div>
       </div>
