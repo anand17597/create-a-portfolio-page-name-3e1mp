@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Menu, X } from 'lucide-react';
+import {Menu,X} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavLink {
