@@ -1,7 +1,7 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
-import { ExternalLink,Code2} from 'lucide-react';
+import {ExternalLink,Code2} from 'lucide-react';
 
 interface Project {
   id: number;
