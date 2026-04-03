@@ -1,3 +1,4 @@
+import { lazy, useCallback } from "react";
 import React, { forwardRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
