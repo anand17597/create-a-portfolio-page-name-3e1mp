@@ -30,13 +30,11 @@ const BackToTopButton: React.FC = () => {
   return (
     <button
       onClick={scrollToTop}
-      id="backToTopBtn"
       className={cn(
-        "fixed bottom-6 right-6 p-3 bg-indigo-600 text-white rounded-full shadow-lg transition-all duration-300 z-50",
-        "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+        "fixed bottom-6 right-6 bg-indigo-600 text-white p-3 rounded-full shadow-lg transition-opacity duration-300 z-50",
+        isVisible ? "opacity-100 flex items-center justify-center" : "opacity-0 hidden"
       )}
-      aria-label="Scroll to top"
+      aria-label="Back to top"
     >
       <ArrowUp size={24} />
     </button>
