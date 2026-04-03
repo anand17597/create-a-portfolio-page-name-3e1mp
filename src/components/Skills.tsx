@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useCallback } from 'react';
 import {Code2,FileCode,Database,Server,Atom,ArrowRightLeft,GitBranch,MessageSquare,LayoutDashboard,Cloud,Palette,ShieldCheck} from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
@@ -11,25 +11,56 @@ interface Skill {
 const skills: Skill[] = [
   { name: 'HTML & CSS', icon: Code2 },
   { name: 'JavaScript (ES6+)', icon: FileCode },
-  { name: 'React.js', icon: Atom }, // Using Atom for React.js
+  { name: 'React.js', icon: Atom },
   { name: 'Next.js', icon: ArrowRightLeft },
   { name: 'Node.js', icon: Server },
-  { name: 'PHP', icon: GitBranch },
+  { name: 'PHP', icon: GitBranch }, // Using GitBranch for PHP as a placeholder for backend tech
   { name: 'MySQL', icon: Database },
   { name: 'Socket.IO', icon: MessageSquare },
-  { name: 'TypeScript', icon: Code2 }, // Reusing Code2 for TypeScript
+  { name: 'TypeScript', icon: Code2 },
   { name: 'Tailwind CSS', icon: Palette },
-  { name: 'RESTful APIs', icon: LayoutDashboard }, // Using LayoutDashboard for API concepts
-  { name: 'Git & GitHub', icon: GitBranch }, // Reusing GitBranch for Git
-  { name: 'Cloud Deployment', icon: Cloud },
-  { name: 'Security Best Practices', icon: ShieldCheck },
+  { name: 'RESTful APIs', icon: LayoutDashboard },
+  { name: 'Git & GitHub', icon: GitBranch },
 ];
 
-const Skills: React.FC = () => {
-  const { ref, inView } = useInView({
+const Skills = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) => {
+  const { ref: inViewRef, inView } = useInView({
     triggerOnce: true,
     threshold: 0.1,
   });
+
+  // Merge the passed ref with the inViewRef
+  const setRefs = useCallback(
+    (node: HTMLDivElement) => {
+      // Pass the node to the inViewRef
+      if (inViewRef) {
+        if (typeof inViewRef === 'function') {
+          inViewRef(node);
+        } else {
+          (inViewRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        }
+      }
+      // Pass the node to the forwarded ref
+      if (ref) {
+        if (typeof ref === 'function') {
+          ref(node);
+        } else {
+          (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+        }
+      }
+    },
+    [inViewRef, ref]
+  );
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05, // Stagger children for a nice fade-in effect
+      },
+    },
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -39,37 +70,33 @@ const Skills: React.FC = () => {
   return (
     <motion.section
       id="skills"
-      ref={ref}
+      ref={setRefs}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      variants={{
-        visible: { transition: { staggerChildren: 0.1 } },
-      }}
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 lg:py-28 text-center"
+      variants={containerVariants}
+      className="section-padding bg-slate-50"
     >
-      <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-12">
-        My Skills & Expertise
-      </motion.h2>
-
-      <motion.div
-        variants={{
-          visible: { transition: { staggerChildren: 0.1 } },
-        }}
-        className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6"
-      >
-        {skills.map((skill, index) => (
-          <motion.div
-            key={index}
-            variants={itemVariants}
-            className="flex flex-col items-center justify-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-          >
-            <skill.icon className="text-indigo-600 mb-3" size={36} />
-            <p className="text-lg font-medium text-slate-800">{skill.name}</p>
-          </motion.div>
-        ))}
-      </motion.div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-12">
+          My Skills
+        </motion.h2>
+        <motion.div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-6">
+          {skills.map((skill, index) => (
+            <motion.div
+              key={skill.name}
+              variants={itemVariants}
+              className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 flex flex-col items-center justify-center"
+            >
+              <skill.icon className="text-indigo-500 mb-4" size={48} />
+              <h3 className="text-xl font-semibold text-slate-700">{skill.name}</h3>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
     </motion.section>
   );
-};
+});
+
+Skills.displayName = 'Skills';
 
 export default Skills;
