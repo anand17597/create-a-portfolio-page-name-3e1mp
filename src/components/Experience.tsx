@@ -2,7 +2,7 @@ import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
 import CountUp from 'react-countup';
-import { Briefcase, Building2, TrendingUp, Award } from 'lucide-react'; // Added more icons
+import {Briefcase,Building2,TrendingUp,Award} from 'lucide-react'; // Added more icons
 
 const companyNames = [
   "TechSolutions Inc.",
