@@ -1,5 +1,5 @@
 import React from 'react';
-import {Code2, Linkedin } from 'lucide-react';
+import {Code2,Link} from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
