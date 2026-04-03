@@ -8,6 +8,7 @@ import Projects from '@/components/Projects';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import BackToTopButton from '@/components/BackToTopButton';
+import FloatingWhatsAppButton from '@/components/FloatingWhatsAppButton'; // Added
 import { cn } from '@/lib/utils'; // Assuming you have this utility
 
 interface NavLink {
@@ -25,76 +26,80 @@ const navLinks: NavLink[] = [
 ];
 
 const Index: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string>('hero');
+
+  const heroRef = useRef<HTMLSectionElement>(null);
+  const aboutRef = useRef<HTMLDivElement>(null);
+  const skillsRef = useRef<HTMLDivElement>(null);
+  const experienceRef = useRef<HTMLDivElement>(null);
+  const projectsRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  const sectionRefs = useRef<Record<string, React.RefObject<HTMLElement>>>({
+    hero: heroRef,
+    about: aboutRef,
+    skills: skillsRef,
+    experience: experienceRef,
+    projects: projectsRef,
+    contact: contactRef,
+  });
+
   const scrollTo = useCallback((id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      // Get navbar height dynamically
-      const navbar = document.getElementById('navbar');
-      const navbarHeight = navbar ? navbar.offsetHeight : 0;
-      window.scrollTo({
-        top: element.offsetTop - navbarHeight + 1, // +1 to ensure it's slightly below navbar
-        behavior: 'smooth',
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   }, []);
 
-  const [activeSection, setActiveSection] = useState<string>('hero');
-  const sectionRefs = useRef<Record<string, HTMLDivElement | HTMLSectionElement | null>>({});
+  const scrollToContact = useCallback(() => scrollTo('contact'), [scrollTo]);
+  const scrollToProjects = useCallback(() => scrollTo('projects'), [scrollTo]);
 
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '0px 0px -50% 0px', // Adjust this margin if sections are too short or tall
-      threshold: 0.1,
+      rootMargin: '-30% 0px -70% 0px', // Adjust these values to control when a section becomes 'active'
+      threshold: 0,
     };
 
-    const observer = new IntersectionObserver((entries) => {
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           setActiveSection(entry.target.id);
         }
       });
-    }, observerOptions);
+    };
 
-    // Observe all sections
-    navLinks.forEach((link) => {
-      const ref = sectionRefs.current[link.id];
-      if (ref) {
-        observer.observe(ref);
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    Object.values(sectionRefs.current).forEach(ref => {
+      if (ref.current) {
+        observer.observe(ref.current);
       }
     });
 
     return () => {
-      // Disconnect observer on component unmount
-      navLinks.forEach((link) => {
-        const ref = sectionRefs.current[link.id];
-        if (ref) {
-          observer.unobserve(ref);
+      Object.values(sectionRefs.current).forEach(ref => {
+        if (ref.current) {
+          observer.unobserve(ref.current);
         }
       });
     };
-  }, [navLinks]);
+  }, []);
 
-  const scrollToContact = useCallback(() => scrollTo('contact'), [scrollTo]);
-  const scrollToProjects = useCallback(() => scrollTo('projects'), [scrollTo]);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="bg-slate-50 text-slate-800 antialiased">
       <Navbar navLinks={navLinks} scrollTo={scrollTo} activeSection={activeSection} />
-      <main className="flex-grow">
-        <Hero
-          ref={(el) => (sectionRefs.current['hero'] = el)}
-          scrollToContact={scrollToContact}
-          scrollToProjects={scrollToProjects}
-        />
-        <About ref={(el) => (sectionRefs.current['about'] = el)} />
-        <Skills ref={(el) => (sectionRefs.current['skills'] = el)} />
-        <Experience ref={(el) => (sectionRefs.current['experience'] = el)} />
-        <Projects ref={(el) => (sectionRefs.current['projects'] = el)} />
-        <Contact ref={(el) => (sectionRefs.current['contact'] = el)} />
-      </main>
+
+      <Hero ref={heroRef} scrollToContact={scrollToContact} scrollToProjects={scrollToProjects} />
+      <About ref={aboutRef} />
+      <Skills ref={skillsRef} />
+      <Experience ref={experienceRef} />
+      <Projects ref={projectsRef} />
+      <Contact ref={contactRef} />
       <Footer />
-      <BackToTopButton />
+      <BackToTopButton scrollTo={scrollTo} />
+      <FloatingWhatsAppButton phoneNumber="917010190110" />
     </div>
   );
 };
