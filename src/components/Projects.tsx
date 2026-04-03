@@ -1,42 +1,55 @@
 import { lazy } from "react";
 import React, { forwardRef, useCallback } from 'react';
-import {ArrowRight} from 'lucide-react';
 import { useInView } from 'react-intersection-observer';
 import { motion } from 'framer-motion';
+import {ExternalLink,Code2} from 'lucide-react'; // Code2 for GitHub link
 
 interface Project {
-  id: number;
+  id: string;
   title: string;
   description: string;
   image: string;
-  technologies: string[];
-  link: string;
+  techStack: string[];
+  liveLink: string;
+  repoLink: string;
 }
 
 const projects: Project[] = [
   {
-    id: 1,
+    id: 'project-1',
     title: 'E-commerce Platform',
-    description: 'A full-featured e-commerce solution with product listings, shopping cart, user authentication, and payment integration. Built with Next.js, Node.js, and MongoDB.',
-    image: 'https://images.unsplash.com/photo-1550439062-609e1d88a282?auto=format&fit=crop&w=800&q=80',
-    technologies: ['Next.js', 'Node.js', 'MongoDB', 'Tailwind CSS'],
-    link: '#',
+    description: 'A full-featured online store with product listings, cart management, and secure payment integration.',
+    image: 'https://images.unsplash.com/photo-1555952496-20f9f8b88500?auto=format&fit=crop&w=600&h=400&q=80',
+    techStack: ['React', 'Node.js', 'Express', 'MySQL'],
+    liveLink: '#',
+    repoLink: '#',
   },
   {
-    id: 2,
-    title: 'Real-time Chat Application',
-    description: 'A real-time chat application featuring direct messages, group chats, and online presence indicators. Built with React, Node.js, and Socket.IO.',
-    image: 'https://images.unsplash.com/photo-1605379399642-870262d3d051?auto=format&fit=crop&w=800&q=80',
-    technologies: ['React.js', 'Node.js', 'Socket.IO', 'TypeScript'],
-    link: '#',
+    id: 'project-2',
+    title: 'Real-time Chat App',
+    description: 'An instant messaging application with group chat, private messaging, and notification features.',
+    image: 'https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&w=600&h=400&q=80',
+    techStack: ['Node.js', 'Socket.IO', 'React', 'MongoDB'],
+    liveLink: '#',
+    repoLink: '#',
   },
   {
-    id: 3,
-    title: 'Project Management Tool',
-    description: 'A collaborative project management application with task assignment, progress tracking, and notification features. Built with PHP, Laravel, and MySQL.',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4cd085?auto=format&fit=crop&w=800&q=80',
-    technologies: ['PHP', 'Laravel', 'MySQL', 'JavaScript'],
-    link: '#',
+    id: 'project-3',
+    title: 'Task Management Dashboard',
+    description: 'A comprehensive dashboard for managing tasks, projects, and team collaborations with intuitive UI.',
+    image: 'https://images.unsplash.com/photo-1488590528527-9100ee3fd1fd?auto=format&fit=crop&w=600&h=400&q=80',
+    techStack: ['Next.js', 'TypeScript', 'Tailwind CSS', 'PostgreSQL'],
+    liveLink: '#',
+    repoLink: '#',
+  },
+  {
+    id: 'project-4',
+    title: 'Recipe Sharing Platform',
+    description: 'A social platform for users to share, discover, and save recipes with rich media support.',
+    image: 'https://images.unsplash.com/photo-1556910110-aadf17277735?auto=format&fit=crop&w=600&h=400&q=80',
+    techStack: ['PHP', 'Laravel', 'Vue.js', 'MySQL'],
+    liveLink: '#',
+    repoLink: '#',
   },
 ];
 
@@ -46,10 +59,8 @@ const Projects = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =
     threshold: 0.1,
   });
 
-  // Merge the passed ref with the inViewRef
   const setRefs = useCallback(
-    (node: HTMLDivElement) => {
-      // Pass the node to the inViewRef
+    (node: HTMLDivElement | null) => {
       if (inViewRef) {
         if (typeof inViewRef === 'function') {
           inViewRef(node);
@@ -57,7 +68,6 @@ const Projects = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =
           (inViewRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }
       }
-      // Pass the node to the forwarded ref
       if (ref) {
         if (typeof ref === 'function') {
           ref(node);
@@ -70,10 +80,13 @@ const Projects = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =
   );
 
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
+      y: 0,
       transition: {
+        duration: 0.8,
+        ease: 'easeOut',
         staggerChildren: 0.1,
       },
     },
@@ -81,57 +94,57 @@ const Projects = forwardRef<HTMLDivElement, React.PropsWithChildren>(({}, ref) =
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+    visible: { opacity: 1, y: 0 },
   };
 
   return (
     <motion.section
       id="projects"
       ref={setRefs}
-      initial="hidden"
-      animate={inView ? "visible" : "hidden"}
+      className="bg-slate-50 py-12 md:py-20 lg:py-28"
       variants={containerVariants}
-      className="section-padding bg-white"
+      initial="hidden"
+      animate={inView ? 'visible' : 'hidden'}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <motion.h2 variants={itemVariants} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-800 mb-12">
-          My Recent Projects
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-12" variants={itemVariants}>
+          My Latest Projects
         </motion.h2>
+
         <motion.div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
             <motion.div
               key={project.id}
+              className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
               variants={itemVariants}
-              className="bg-slate-50 rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group"
             >
               <img
                 src={project.image}
                 alt={project.title}
-                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-48 object-cover object-center"
                 loading="lazy"
-                onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = 'https://images.unsplash.com/photo-1507238691740-adfd8121b611?auto=format&fit=crop&w=800&q=80';
-                }}
+                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1600&q=90'; }}
               />
               <div className="p-6 text-left">
-                <h3 className="text-2xl font-semibold text-slate-800 mb-2">{project.title}</h3>
-                <p className="text-slate-600 mb-4">{project.description}</p>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">{project.title}</h3>
+                <p className="text-slate-600 text-sm mb-4">{project.description}</p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.technologies.map((tech, techIndex) => (
-                    <span key={techIndex} className="bg-indigo-100 text-indigo-700 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                  {project.techStack.map((tech, index) => (
+                    <span key={index} className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
                       {tech}
                     </span>
                   ))}
                 </div>
-                <a
-                  href={project.link}
-                  onClick={(e) => e.preventDefault()}
-                  className="text-indigo-600 hover:text-indigo-800 font-semibold flex items-center group-hover:underline"
-                >
-                  View Project
-                  <ArrowRight className="ml-1" size={20} />
-                </a>
+                <div className="flex justify-between items-center">
+                  <a href={project.liveLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800 font-medium text-sm inline-flex items-center">
+                    Live Demo
+                    <ExternalLink className="ml-1 w-4 h-4" />
+                  </a>
+                  <a href={project.repoLink} target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-700 text-sm inline-flex items-center">
+                    <Code2 className="mr-1 w-4 h-4" />
+                    Code
+                  </a>
+                </div>
               </div>
             </motion.div>
           ))}
